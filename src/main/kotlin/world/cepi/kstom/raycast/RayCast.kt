@@ -3,11 +3,8 @@ package world.cepi.kstom.raycast
 import net.minestom.server.coordinate.Point
 import net.minestom.server.coordinate.Vec
 import net.minestom.server.entity.Entity
-import net.minestom.server.entity.LivingEntity
 import net.minestom.server.instance.Instance
 import world.cepi.kstom.util.Fuzzy
-import world.cepi.kstom.util.blockUtilsAt
-import world.cepi.kstom.util.toExactBlockPosition
 
 /**
  * Ray cast utilities for Minestom.
@@ -38,6 +35,7 @@ object RayCast {
         direction: Vec,
         maxDistance: Double = 100.0,
         stepLength: Double = .25,
+        positionInEntity: (Instance, Point, Entity?, Double) -> Entity? = { i, c, o, m -> Fuzzy.positionInEntity(i, c, o, m) },
         shouldContinue: (Point) -> Boolean = { !instance.getBlock(it).isSolid },
         onBlockStep: (Point) -> Unit = { },
         acceptEntity: (Point, Entity) -> Boolean = { _, _ -> true },
@@ -67,7 +65,7 @@ object RayCast {
             }
 
             // checks if there is an entity in this step -- if so, return that.
-            val target = Fuzzy.positionInEntity(instance, currentPos, origin, margin)
+            val target = positionInEntity.invoke(instance, currentPos, origin, margin)
             if (target != null && acceptEntity(currentPos, target)) {
                 return Result(currentPos, HitType.ENTITY, target)
             }
