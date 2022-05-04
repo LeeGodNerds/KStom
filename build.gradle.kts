@@ -1,17 +1,15 @@
-plugins {
+apply {
     // Apply the Kotlin JVM plugin to add support for Kotlin.
-    kotlin("jvm") version "1.6.21"
+    plugin("org.jetbrains.kotlin.jvm")
     // Kotlinx serialization for any data format
-    kotlin("plugin.serialization") version "1.6.21"
+    plugin("org.jetbrains.kotlin.plugin.serialization")
     // Shade the plugin
-    id("com.github.johnrengelman.shadow") version "7.1.0"
-    // Allow publishing
-    `maven-publish`
+    plugin("com.github.johnrengelman.shadow")
 
     // Apply the application plugin to add support for building a jar
-    java
+    plugin("java")
     // Dokka documentation w/ kotlin
-    id("org.jetbrains.dokka") version "1.6.21"
+    plugin("org.jetbrains.dokka")
 }
 
 
@@ -41,7 +39,7 @@ dependencies {
     compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.1")
 
     // Compile Minestom into project
-    compileOnly("com.github.Minestom", "Minestom", "7867313290")
+    compileOnly(project(":minestom:core"))
     compileOnly("io.github.jglrxavpok.hephaistos", "common", "2.4.4")
 
     // import kotlinx serialization
@@ -86,27 +84,6 @@ compileKotlin.kotlinOptions {
     freeCompilerArgs = listOf("-Xinline-classes", "-Xopt-in=kotlin.RequiresOptIn")
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            groupId = project.properties["group"] as? String?
-            artifactId = project.name
-            version = project.properties["version"] as? String?
-
-            from(components["java"])
-        }
-    }
-
-    repositories {
-        maven {
-            url = uri("https://maven.imanity.dev/repository/imanity-libraries/")
-            credentials {
-                username = findProperty("imanityLibrariesUsername").toString()
-                password = findProperty("imanityLibrariesPassword").toString()
-            }
-        }
-    }
-}
 sourceSets.create("demo") {
     java.srcDir("src/demo/java")
     java.srcDir("build/generated/source/apt/demo")
