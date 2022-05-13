@@ -1,8 +1,4 @@
 apply {
-    // Apply the Kotlin JVM plugin to add support for Kotlin.
-    plugin("org.jetbrains.kotlin.jvm")
-    // Kotlinx serialization for any data format
-    plugin("org.jetbrains.kotlin.plugin.serialization")
     // Shade the plugin
     plugin("com.github.johnrengelman.shadow")
 
